@@ -1,8 +1,10 @@
 const express = require('express')
 const app = express()
+const cors = require('cors')
 let notes = require('./notes')
 
 app.use(express.json())
+app.use(cors())
 
 
 app.get('/', (request,response)=>{
@@ -22,7 +24,18 @@ app.get('/api/notes/:id', (request, response)=>{
         response.status(404).end()
     }
 })
-
+app.put('api/notes/:id', (request, response)=>{
+  const id = Number(request.params.id)
+  let note = notes.find(n=> n.id===id)
+  console.log("note1", note)
+  if(!note){
+    response.status(204).json({error: "note does not exist"})
+  }else{
+    const newNote = {...note, important: !important}
+    note = newNote;
+    response.json(note)
+  }
+})
 const generateId=()=>{
     const maxId = notes.length > 0
         ? Math.max(...notes.map(n => n.id))
@@ -50,7 +63,7 @@ app.delete('/api/notes/:id', (request, response)=>{
     response.status(204).end()
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT,()=>{
     console.log(`Server running on port ${PORT}`)
 })
