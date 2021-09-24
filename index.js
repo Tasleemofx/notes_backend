@@ -5,6 +5,7 @@ let notes = require('./notes')
 
 app.use(express.json())
 app.use(cors())
+app.use(express.static('build'))
 
 
 app.get('/', (request,response)=>{
